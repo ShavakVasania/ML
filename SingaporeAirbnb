@@ -1,0 +1,74 @@
+import pandas as pd
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from tensorflow import keras
+from keras import layers
+from keras import callbacks
+from keras.callbacks import EarlyStopping
+from sklearn.model_selection import train_test_split
+from sklearn import metrics
+import numpy as np
+
+
+houses = pd.read_csv('/workspaces/108059501/ownstuff/SingaporeAirBnB.csv')
+
+Data = houses.copy().dropna()
+
+Data = Data.drop('host_id',axis=1)
+Data = Data.drop('id',axis=1)
+Data = Data.drop("host_name",axis=1)
+Data = Data.drop('name',axis=1)
+Data = Data.drop('last_review',axis=1)
+
+
+features_num = ["price","latitude","longitude", "minimum_nights","number_of_reviews","reviews_per_month","calculated_host_listings_count","availability_365"]
+features_cat = ["neighbourhood_group", "neighbourhood", "room_type"]
+
+scaler = StandardScaler()
+Data[numerical_cols] = scaler.fit_transform(Data[features_num])
+
+encoder = OneHotEncoder()
+Data_encoded = encoder.fit_transform(Data[features_cat])
+Data = pd.concat([Data, pd.DataFrame(Data_encoded.toarray())], axis=1)
+Data = Data.drop(features_num, axis=1)
+
+df_x = Data.drop('price',axis =1)
+df_y = Data["price"]
+
+X_train, X_rem, y_train, y_rem = train_test_split(df_x,df_y, train_size=0.8, random_state=1)
+X_valid, X_test, y_valid, y_test = train_test_split(X_rem, y_rem, test_size=0.5, random_state=1)
+
+
+model = keras.Sequential([
+    layers.Dense(128, input_dim=X_train.shape[1], activation='relu'),
+    layers.BatchNormalization(),
+    layers.Dropout(0.3),
+    layers.Dense(128, activation='relu'),
+    layers.BatchNormalization(),
+    layers.Dropout(0.3),
+    layers.Dense(128, activation='relu'),
+    layers.Dense(1)
+])
+
+early_stopping = EarlyStopping(
+    min_delta=0.001, # minimium amount of change to count as an improvement
+    patience=20, # how many epochs to wait before stopping
+    restore_best_weights=True,
+)
+
+model.compile(
+    optimizer='adam', # SGD is more sensitive to differences of scale
+    loss='mae',
+    metrics=['mae'],
+)
+
+history = model.fit(
+    X_train, y_train,
+    validation_data=(X_valid, y_valid),
+    batch_size=256,
+    epochs=500,
+    callbacks=[early_stopping], # put your callbacks in a list
+)
+
+
+y_pred = model.predict(X_test)
+print('VarScore:',metrics.explained_variance_score(y_test,y_pred))
