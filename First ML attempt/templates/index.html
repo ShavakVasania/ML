@@ -1,0 +1,89 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    log
+{% endblock %}
+
+{% block main %}
+    <h2 style="text-align:center; margin-bottom:40px">AIRBNB</h2>
+    <table class="table table-striped">
+        <caption style="text-align:center">All prices in USD</caption>
+        <thead>
+          <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Owner id</th>
+            <th scope="col">Owner name</th>
+            <th scope="col">Price per night</th>
+            <th scope="col">Minimum nights</th>
+            <th scope="col">Neighbourhood group</th>
+            <th scope="col">Neighbourhood</th>
+            <th scope="col">Room_type</th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for rent in selectAir %}
+                <tr>
+                    <td>{{ rent["id"] }}</td>
+                    <td>{{ rent["name"] }}</td>
+                    <td>{{ rent["host_id"] }}</td>
+                    <td>{{ rent["host_name"] }}</td>
+                    <td>{{ rent["price"] }}</td>
+                    <td>{{ rent["minimum_nights"] }}</td>
+                    <td>{{ rent["neighbourhood_group"] }}</td>
+                    <td>{{ rent["neighbourhood"] }}</td>
+                    <td>{{ rent["room_type"] }}</td>
+                    <td>
+                        <form action="/" method="post">
+                            <input type="hidden" name="deleted" value={{ rent["id"] }}>
+                            <input type="hidden" name="identify" value="airbnb">
+                            <button class="btn btn-primary" type="submit">DELETE</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <h2 style="text-align:center; margin:40px">HOMES</h2>
+        <table class="table table-striped table-dark">
+            <caption style="text-align:center">All prices in USD</caption>
+            <thead>
+              <tr>
+                <th scope="col">Id</th>
+                <th scope="col">price</th>
+                <th scope="col">bedrooms</th>
+                <th scope="col">sqft living</th>
+                <th scope="col">floors</th>
+                <th scope="col">Waterfront(1=yes)</th>
+                <th scope="col">views</th>
+                <th scope="col">condition</th>
+                <th scope="col">yr_built</th>
+                <th scope="col">zipcode</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for house in selectHouse %}
+                    <tr>
+                        <td>{{ house["id"] }}</td>
+                        <td>{{ house["price"] }}</td>
+                        <td>{{ house["bedrooms"] }}</td>
+                        <td>{{ house["sqft_living"] }}</td>
+                        <td>{{ house["floors"] }}</td>
+                        <td>{{ house["waterfront"] }}</td>
+                        <td>{{ house["view"] }}</td>
+                        <td>{{ house["condition"] }}</td>
+                        <td>{{ house["yr_built"] }}</td>
+                        <td>{{ house["zipcode"] }}</td>
+                        <td>
+                            <form action="/" method="post">
+                                <input type="hidden" name="deleted" value={{ house["id"] }}>
+                                <input type="hidden" name="identify" value="house">
+                                <button class="btn btn-primary" type="submit">DELETE</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+{% endblock %}

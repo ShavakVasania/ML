@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Search
+{% endblock %}
+
+{% block main %}
+    <ul class="m-3 nav text-light">
+        <li>
+            <div>
+                <h3 style="color:black">SEARCH FOR AN AIRBNB</h3>
+                <form action="/airbnb" method="post" class="form-inline">
+                    <div class="form-row">
+                        <div class="mb-3 col">
+                            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="price" placeholder="Max-price" type="text">
+                        </div>
+                        <div class="mb-3 col">
+                            <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="nights" placeholder="num nights" type="text">
+                        </div>
+                        <div class="mb-3 col">
+                            <select name="neighbourhood">
+                                <option selected>Any</option>
+                                {% for neighbourhood in neighbourhoods %}
+                                <option>{{ neighbourhood["neighbourhood"] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3 col">
+                            <select name="room_type">
+                                <option selected>Any</option>
+                                {% for room in room_types %}
+                                <option>{{ room["room_type"] }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" type="submit">FILTER</button>
+                    </div>
+                </form>
+            </div>
+        </li>
+        <li>
+            <div>
+                <h3 style="color:black">SAVE AN AIRBNB FOR LATER</h3>
+                <form action="/selectAirbnb" method="post" class="form-inline">
+                    <div class="mb-3 col">
+                        <input autocomplete="off" autofocus class="form-control mx-auto w-auto" id="username" name="house_id" placeholder="Save Id" type="text">
+                    </div>
+                    <button class="btn btn-primary" type="submit">SAVE</button>
+                </form>
+            </div>
+        </li>
+
+
+
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Name</th>
+            <th scope="col">Owner id</th>
+            <th scope="col">Owner name</th>
+            <th scope="col">Price per night</th>
+            <th scope="col">Minimum nights</th>
+            <th scope="col">Review count</th>
+            <th scope="col">Room type</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for house in houses %}
+                <tr>
+                    <td>{{ house["id"] }}</td>
+                    <td>{{ house["name"] }}</td>
+                    <td>{{ house["host_id"] }}</td>
+                    <td>{{ house["host_name"] }}</td>
+                    <td>{{ house["price"] }}</td>
+                    <td>{{ house["minimum_nights"] }}</td>
+                    <td>{{ house["number_of_reviews"] }}</td>
+                    <td>{{ house["room_type"] }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+{% endblock %}
