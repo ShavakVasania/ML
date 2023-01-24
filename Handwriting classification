@@ -50,7 +50,7 @@ model.add(Dense(128,activation='relu'))
 model.add(Dropout(0.2))
 model.add(Dense(26))
 
-cbs = [EarlyStopping(patience=3, restore_best_weights=True)]
+cbs = [EarlyStopping(patience=5, restore_best_weights=True)]
 
 model.compile(optimizer='Adam',
               loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
