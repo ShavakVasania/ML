@@ -6,6 +6,7 @@ from keras.utils import to_categorical
 from keras.models import Sequential
 from keras.layers import MaxPooling2D, Conv2D, Flatten, Dense, Activation, Dropout
 from keras.callbacks import EarlyStopping
+from tensorflow.keras import metrics
 
 def unpickle(file):
     with open(file, 'rb') as fo:
@@ -57,3 +58,8 @@ model.fit(x_train,
            epochs=50,
            validation_split=0.2,
            callbacks=cbs)
+
+predictions = model.predict(x_test)
+accuracy = metrics.Accuracy()
+accuracy.update_state(y_test predictions)
+print("Accuracy: {:.2f}%".format(accuracy.result() * 100))
