@@ -1,0 +1,60 @@
+import pickle
+import numpy as np
+from PIL import Image
+from numpy import reshape, transpose
+from keras.utils import to_categorical
+from keras.models import Sequential
+from keras.layers import MaxPooling2D, Conv2D, Flatten, Dense, Activation, Dropout
+from keras.callbacks import EarlyStopping
+
+def unpickle(file):
+    with open(file, 'rb') as fo:
+        myDict = pickle.load(fo, encoding='latin1')
+    return myDict
+
+# load data
+train = unpickle("/workspaces/ShavakVasania/cifar-10-batches-py/data_batch_1")
+test = unpickle("/workspaces/ShavakVasania/cifar-10-batches-py/test_batch")
+meta = unpickle("/workspaces/ShavakVasania/cifar-10-batches-py/batches.meta")
+x_train = train["data"]
+x_test = test["data"]
+y_train = train["labels"]
+y_test = test["labels"]
+
+#normalize numerical data and one hot encode labels
+x_train = x_train.astype('float32')/255
+x_test = x_test.astype('float32')/255
+y_train = to_categorical(y_train, num_classes=10)
+y_test = to_categorical(y_test,num_classes=10)
+
+#reshape input image data into correct format for CNN
+x_train = x_train.reshape((10000,3,32,32)).transpose(0,2,3,1)
+x_test = x_test.reshape((10000,3,32,32)).transpose(0,2,3,1)
+
+#add convultional and maxpooling layers
+#softmax acivation to create probabilities of image being of each label
+model = Sequential([
+    Conv2D(32, kernel_size=3, padding='same',activation='relu', input_shape=(32,32,3)),
+    MaxPooling2D(pool_size = 2),
+    Conv2D(64, kernel_size=3, padding='same',activation='relu'),
+    MaxPooling2D(pool_size = 2),
+    Conv2D(64, kernel_size=3, padding='same',activation='relu'),
+    MaxPooling2D(pool_size = 2),
+    Conv2D(64, kernel_size=3, padding='same',activation='relu'),
+    MaxPooling2D(pool_size = 2),
+    Flatten(),
+    Dense(128, activation='relu'),
+    Dropout(0.2),
+    Dense(10, activation='softmax')
+])
+#add loss function and optimizer. categorical crossentropy used because multiple classification problem
+#
+model.compile(loss='categorical_crossentropy',
+                optimizer='Adam',
+                metrics=['accuracy'])
+#fit data to network. 20% of training data to be used as validation data.
+model.fit(x_train, 
+           y_train,
+           batch_size=64,
+           epochs=50,
+           validation_split=0.2)
