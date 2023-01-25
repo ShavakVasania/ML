@@ -32,6 +32,7 @@ y_test = to_categorical(y_test,num_classes=10)
 x_train = x_train.reshape((10000,3,32,32)).transpose(0,2,3,1)
 x_test = x_test.reshape((10000,3,32,32)).transpose(0,2,3,1)
 
+#softmax final layer produces probabily score for each class
 model = Sequential([
     Conv2D(32, kernel_size=3, padding='same',activation='relu', input_shape=(32,32,3)),
     MaxPooling2D(pool_size = 2),
@@ -46,12 +47,15 @@ model = Sequential([
     Dropout(0.2),
     Dense(10, activation='softmax')
 ])
+#stop fitting after 5 epochs of no improvement
 cbs = [EarlyStopping(patience=5, restore_best_weights=True)]
 
+#categorical crossentropy loss used as it is a multiple classification problem
 model.compile(loss='categorical_crossentropy',
                 optimizer='Adam',
                 metrics=['accuracy'])
-
+                
+#fit training data to model
 model.fit(x_train, 
            y_train,
            batch_size=64,
@@ -59,7 +63,8 @@ model.fit(x_train,
            validation_split=0.2,
            callbacks=cbs)
 
-predictions = model.predict(x_test)
+#get accuracy on new test data
+y_pred = model.predict(x_test)
 accuracy = metrics.Accuracy()
-accuracy.update_state(y_test predictions)
+accuracy.update_state(y_test y_pred)
 print("Accuracy: {:.2f}%".format(accuracy.result() * 100))
