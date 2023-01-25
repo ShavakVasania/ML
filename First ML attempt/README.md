@@ -28,12 +28,6 @@ On the same page as the filter, there is an input area where users can input the
 ### Predicting prices
 I also implemented a neural network with a tensorflow backend that takes as input 14 features about a house including bedrooms, bathrooms, sqft of living area and sqft lot etc and estimates a minimum price required for a house with these attributes. The user must enter values for all the fields and an estimate will be calculated.
 
-### Helpers.py
-There are 3 custom functions in the helper.py file, all of which were supplied in the previous problem set(Finance).
-- apology - provides error messages to the user when they have inputted something incorrectly(changing the apology.html file)
-- login_required - checks if the user has already logged in before granting access to certian routes/html files
-- usd - converts an inputted value into the correct USD format
-
 # Improvements
 - Could use a better/different ML model to possibly gain a higher accuracy score
 - Allow users to change account details
